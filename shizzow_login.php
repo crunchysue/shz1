@@ -1,0 +1,1 @@
+<?php $usrpwd = 'username:password'; ?>   
