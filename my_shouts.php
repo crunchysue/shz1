@@ -72,17 +72,17 @@ function getShoutInfo( latlng ) {
 				retval += '<br /><a href="' + this.website + '">' + this.website + '</a>';	
 			}
 						
-			retval += '<br/><br /><input type="submit" id="doShout" value="Shout From Here" />';
-						
 			
-			retval += '<script type="text/javascript">';			
-			
-			retval += '$("#doShout").click(function(){';
-			retval += '$.post("shizzow_post.php", {places_key:' + this.places_key + '"} );});';
-
-			retval += '<\/script>';
-
-
+			retval += '<form id="frmDoShout"><input type="submit" id="submitShout" value="Shout From Here" />';
+			retval += '<input type="text" id="shzmsg" value="here i am baby, NOT" /></form>';		
+				
+			retval += '<script type="text/javascript">';
+		
+			retval += '$("form#frmDoShout").submit(function(){doPost("';
+			retval += this.places_key;
+			retval += '");return (false);});';
+		
+			retval += "</" + "script>";
 	
 		}	 
 	}); 
@@ -145,10 +145,15 @@ function setupMap() {
 
 // User clicked on a marker
 function handleOverlayClick( marker ) {
-	var info = getShoutInfo(marker.getLatLng());
-	marker.openInfoWindowHtml(
-		"Thanks for clicking the marker at<br />" + info
-	);
+	// Don't know what Ey is really for, but is undefined when
+	// marker is a real maker, and true when marker is
+	// the 'shout now' button.
+	if (marker.Ey !== false){
+		var info = getShoutInfo(marker.getLatLng());
+		marker.openInfoWindowHtml(
+			"Thanks for clicking the marker at<br />" + info
+		);
+	}
 } // end function handleOverlayClick()
 
 
@@ -158,7 +163,14 @@ function handlePointClick( point ) {
 	// this here's where we'll make a shout. w00t!
 }
 
+ 
 
+function doPost(thekey){
+	$.post(
+	 	"shizzow_post.php", 
+	 	{places_key:thekey, shouts_message:$('#shzmsg').val()}
+	 );
+}
 
 </script> 
 
@@ -186,7 +198,7 @@ function handlePointClick( point ) {
 
 
 <!-- ! Print out the JSON object -->
-<?php echo ("<pre>" . print_r($data, true) . "</pre>"); ?>
+<?php //echo ("<pre>" . print_r($data, true) . "</pre>"); ?>
 
 </body>
 </html>
